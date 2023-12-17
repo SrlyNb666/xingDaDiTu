@@ -1,8 +1,12 @@
 import numpy as np
-def way_search(file):
-    file2='map_maintain/verts.txt'
-    with open(file2, 'r',encoding='utf-8') as f:
+file2='map_maintain/verts.txt'
+with open(file2, 'r',encoding='utf-8') as f:
         line_edge = f.readlines()
+
+
+def way_search(file):
+    
+    
     n = len(line_edge)
     print(n)
     with open(file, 'r',encoding='utf-8') as f:
@@ -17,14 +21,26 @@ def way_search(file):
     return matrix
 
 
+def find_index(location):
 
-def dijkstra(matrix, start, end):
+    for line in line_edge:
+        row = line.split('  ')
+        if row[1] == location:
+            return row[0]
+    
+
+
+def dijkstra(start_txt, end_txt):
+    start = int(find_index(start_txt))
+    end = int(find_index(end_txt))
+    file = 'map_maintain/edges.txt'
+    matrix= way_search(file)
     n = len(matrix)
     visited = [False] * n
     distances = [np.inf] * n
     previous_nodes = [-1] * n
     distances[start] = 0
-
+   
     while True:
         min_distance = np.inf
         min_node = -1
@@ -44,24 +60,40 @@ def dijkstra(matrix, start, end):
                 previous_nodes[i] = min_node
 
     path = []
+    path_jw = []
     i = end
     while i != -1:
-        path.append(i)
-        i = previous_nodes[i]
-    path.reverse()
+        _ ,spot ,jw = line_edge[i].split('  ', 2)
 
-    return path, distances[end]
+        
+
+        path.append(str(spot))
+        i = previous_nodes[i]
+        jw_1 = jw.split(',')[0].strip()
+        jw_2 = jw.split(',')[1].strip()
+        path_jw.append(str(f'{jw_1},{jw_2}'))
+    
+    path.reverse()
+    
+    path_all = f'从 {start_txt} 到 {end_txt} 的最短路径是：{path}'
+    distances = f'距离是：{distances[end]} km'
+    print(distances[end])
+    if distances[end]!= 'i':
+        return path_all, distances, path, distances[end],path_jw,line_edge
+    else:
+        return None, None, path, distances[end],path_jw,line_edge
+
+
 
 
 def main():
-    file = 'map_maintain/edges.txt'
-    matrix = way_search(file)
-    print(matrix.shape)
-    start = 5
-    end = 8
-    path, distance = dijkstra(matrix, start, end)
-
-    print(f'从 {start} 到 {end} 的最短路径是：{path}')
-
+    
+    
+    start = '南京信息工程大学文德楼'
+    end = '南京信息工程大学明德楼'
+    path_print, distances_print,path,distances,path_jw = dijkstra(start, end)
+    print(path_print)
+    print(distances_print)
+    print(path_jw)
 if __name__ == '__main__':
     main()
