@@ -1,5 +1,6 @@
 import sys
-sys.path.append('F:\project\信大地图')  # 添加上一级目录到Python路径
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from play_windows.windows_main import QApplication, MapViewer
 
 if __name__ == "__main__":
